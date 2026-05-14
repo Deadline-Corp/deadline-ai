@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DEADLINE AI — Карманный digital-отдел</title>
+<meta name="description" content="DEADLINE AI — твой личный AI-агент в Telegram. Пишет контент, делает сайты, запускает ботов, управляет календарём и работает 24/7.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+ --bg:#090909;
+ --surface:#111112;
+ --border:rgba(255,255,255,0.06);
+ --text:#F0E8D5;
+ --mute:#8A7E64;
+ --copper:#C76A2D;
+ --copper-hover:#D9803E;
+ --copper-glow:rgba(199,106,45,0.15);
+ --green:#22C55E;
+ --radius:10px
+}
+html{scroll-behavior:smooth}
+body{
+ background:var(--bg);
+ color:var(--text);
+ font-family:'Inter',system-ui,-apple-system,sans-serif;
+ line-height:1.6;
+ -webkit-font-smoothing:antialiased;
+ overflow-x:hidden
+}
+::selection{background:var(--copper);color:var(--bg)}
+a{color:var(--copper);text-decoration:none;transition:color .2s}
+a:hover{color:var(--copper-hover)}
+img{max-width:100%;height:auto;display:block}
+.container{max-width:1100px;margin:0 auto;padding:0 24px}
+/* ---- NAV ---- */
+nav{
+ position:fixed;top:0;left:0;right:0;z-index:100;
+ background:rgba(9,9,9,0.85);backdrop-filter:blur(16px);
+ border-bottom:1px solid var(--border)
+}
+nav .container{
+ display:flex;align-items:center;justify-content:space-between;
+ height:64px
+}
+.logo{font-weight:700;font-size:20px;letter-spacing:-0.3px}
+.logo span{color:var(--copper)}
+.nav-links{display:flex;align-items:center;gap:32px;font-size:14px;font-weight:500}
+.nav-links a{color:var(--mute);transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.btn{
+ display:inline-flex;align-items:center;gap:8px;
+ font-family:'Inter',sans-serif;font-size:14px;font-weight:600;
+ border:none;cursor:pointer;border-radius:8px;
+ transition:all .25s;padding:10px 22px
+}
+.btn-primary{background:var(--copper);color:#fff}
+.btn-primary:hover{background:var(--copper-hover);transform:translateY(-1px);box-shadow:0 8px 24px var(--copper-glow)}
+.btn-ghost{background:rgba(255,255,255,0.04);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:rgba(255,255,255,0.08)}
+/* ---- HERO ---- */
+.hero{
+ padding:140px 0 80px;text-align:center;
+ position:relative;overflow:hidden
+}
+.hero::before{
+ content:'';position:absolute;top:-50%;left:50%;translate:-50% 0;
+ width:800px;height:800px;
+ background:radial-gradient(circle,var(--copper-glow) 0%,transparent 70%);
+ pointer-events:none
+}
+.hero-badge{
+ display:inline-flex;align-items:center;gap:8px;
+ font-size:13px;font-weight:500;letter-spacing:0.3px;
+ background:rgba(255,255,255,0.05);
+ border:1px solid var(--border);
+ border-radius:100px;padding:6px 16px;margin-bottom:32px;color:var(--mute)
+}
+.hero-badge span{color:var(--green);width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block}
+.hero h1{
+ font-size:clamp(40px,7vw,72px);
+ font-weight:600;line-height:1.08;
+ letter-spacing:-2.5px;margin-bottom:20px
+}
+.hero h1 em{font-style:normal;color:var(--copper)}
+.hero p{
+ font-size:clamp(16px,2vw,20px);
+ color:var(--mute);max-width:640px;margin:0 auto 40px;
+ line-height:1.6
+}
+.hero-actions{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+/* ---- TEASER PHONE ---- */
+.teaser{position:relative;padding:0 0 80px}
+.teaser-inner{
+ background:var(--surface);border:1px solid var(--border);
+ border-radius:16px;padding:40px;max-width:700px;margin:0 auto;
+ font-family:'JetBrains Mono',monospace;font-size:13px;line-height:1.8
+}
+.msg{display:flex;gap:12px;margin-bottom:12px}
+.msg-avatar{
+ width:30px;height:30px;border-radius:50%;flex-shrink:0;
+ display:flex;align-items:center;justify-content:center;
+ font-size:12px;font-weight:700;margin-top:4px
+}
+.msg-user .msg-avatar{background:var(--copper);color:#fff}
+.msg-ai .msg-avatar{background:rgba(255,255,255,0.1);color:var(--text)}
+.msg-bubble{
+ background:rgba(255,255,255,0.04);border-radius:10px;
+ padding:10px 14px;max-width:85%
+}
+.msg-user .msg-bubble{background:rgba(199,106,45,0.12)}
+.msg-ai{flex-direction:row-reverse}
+.msg-ai .msg-bubble{background:rgba(255,255,255,0.04)}
+.msg-time{font-size:11px;color:var(--mute);margin-top:4px}
+.check{color:var(--green)}
+/* ---- SECTIONS ---- */
+section{padding:100px 0;border-top:1px solid var(--border)}
+.section-label{
+ font-family:'JetBrains Mono',monospace;
+ font-size:12px;font-weight:500;letter-spacing:2px;
+ color:var(--copper);margin-bottom:12px;text-transform:uppercase
+}
+.section-title{
+ font-size:clamp(28px,4vw,44px);
+ font-weight:600;letter-spacing:-1.2px;
+ line-height:1.15;margin-bottom:16px
+}
+.section-sub{
+ font-size:17px;color:var(--mute);max-width:520px;margin-bottom:48px
+}
+/* ---- SCENARIOS ---- */
+.scenarios{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}
+.scenario{
+ background:var(--surface);border:1px solid var(--border);
+ border-radius:var(--radius);padding:28px;transition:all .3s;
+ position:relative;overflow:hidden
+}
+.scenario:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
+.scenario-icon{
+ width:44px;height:44px;border-radius:10px;
+ display:flex;align-items:center;justify-content:center;
+ font-size:20px;margin-bottom:16px;
+ background:rgba(255,255,255,0.04);border:1px solid var(--border)
+}
+.scenario h3{font-size:18px;font-weight:600;margin-bottom:8px}
+.scenario p{font-size:14px;color:var(--mute);line-height:1.6;margin-bottom:16px}
+.scenario-tag{
+ display:inline-block;font-size:11px;font-weight:600;letter-spacing:0.5px;
+ text-transform:uppercase;padding:3px 10px;border-radius:100px;
+ background:rgba(34,197,94,0.1);color:var(--green);margin-top:auto
+}
+/* ---- PRICING ---- */
+.pricing-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px}
+.pricing-card{
+ background:var(--surface);border:1px solid var(--border);
+ border-radius:var(--radius);padding:32px;transition:all .3s;
+ display:flex;flex-direction:column
+}
+.pricing-card:hover{border-color:rgba(255,255,255,0.12);transform:translateY(-2px)}
+.pricing-card.featured{
+ border-color:var(--copper);
+ background:linear-gradient(135deg,rgba(199,106,45,0.06),transparent)
+}
+.pricing-card.featured .btn-primary{background:var(--copper)}
+.pricing-name{font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.pricing-price{font-size:40px;font-weight:700;letter-spacing:-1.5px;margin-bottom:4px}
+.pricing-price span{font-size:16px;font-weight:400;color:var(--mute)}
+.pricing-desc{font-size:14px;color:var(--mute);margin-bottom:24px}
+.pricing-features{list-style:none;margin-bottom:24px;flex:1}
+.pricing-features li{
+ font-size:14px;padding:8px 0;border-top:1px solid var(--border);
+ display:flex;align-items:center;gap:10px
+}
+.pricing-features li::before{content:'✓';color:var(--copper);font-weight:700}
+.pricing-card .btn-primary{margin-top:auto}
+/* ---- FAQ ---- */
+.faq-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:20px}
+.faq-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px}
+.faq-item h4{font-size:16px;font-weight:600;margin-bottom:8px}
+.faq-item p{font-size:14px;color:var(--mute);line-height:1.6}
+/* ---- CTA ---- */
+.cta-section{text-align:center;padding:120px 0;position:relative}
+.cta-section::before{
+ content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+ background:radial-gradient(ellipse at center,var(--copper-glow) 0%,transparent 60%);
+ pointer-events:none
+}
+.cta-section h2{font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-1.2px;margin-bottom:16px}
+.cta-section p{font-size:17px;color:var(--mute);max-width:500px;margin:0 auto 32px}
+.cta-section .btn{font-size:16px;padding:14px 32px}
+.cta-note{font-size:13px;color:var(--mute);margin-top:16px}
+/* ---- FOOTER ---- */
+footer{
+ padding:40px 0;border-top:1px solid var(--border);
+ text-align:center;font-size:13px;color:var(--mute)
+}
+footer a{color:var(--mute)}
+footer a:hover{color:var(--text)}
+/* ---- RESPONSIVE ---- */
+@media(max-width:768px){
+ nav .container{height:56px}
+ .nav-links{display:none}
+ .hero{padding:100px 0 60px}
+ section{padding:60px 0}
+ .teaser-inner{padding:24px}
+ .msg-bubble{max-width:100%}
+ .scenarios{grid-template-columns:1fr}
+ .pricing-grid{grid-template-columns:1fr;max-width:400px;margin:0 auto}
+ .faq-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="container">
+    <div class="logo"><span>✦</span> DEADLINE <span>AI</span></div>
+    <div class="nav-links">
+      <a href="#scenarios">Возможности</a>
+      <a href="#pricing">Тарифы</a>
+      <a href="#faq">Вопросы</a>
+      <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-primary">Написать в Telegram</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-badge"><span></span> Работает 24/7 · Telegram · Голосом и текстом</div>
+    <h1>
+      Карманный<br>
+      <em>digital-отдел</em>
+    </h1>
+    <p>
+      Один AI-агент в Telegram вместо команды из пяти человек.
+      Пишет контент, делает сайты, запускает ботов, управляет календарём,
+      ищет информацию и работает за компьютером.
+    </p>
+    <div class="hero-actions">
+      <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-primary">
+        ✦ Попробовать
+      </a>
+      <a href="#scenarios" class="btn btn-ghost">Как работает</a>
+    </div>
+  </div>
+</section>
+
+<!-- TEASER -->
+<section class="teaser">
+  <div class="container">
+    <div class="teaser-inner">
+      <div class="msg msg-user">
+        <div class="msg-avatar">Т</div>
+        <div class="msg-bubble">
+          (голосовое 20с) нужен лендинг для курса, с оплатой через Stripe и ботом для выдачи уроков, сделаешь?
+          <div class="msg-time">12:30</div>
+        </div>
+      </div>
+      <div class="msg msg-ai">
+        <div class="msg-bubble">
+          <span class="check">✔</span> Понял. Делаю:<br>
+          1. Лендинг с воронкой → через час готов<br>
+          2. Telegram-бот для выдачи уроков → параллельно<br>
+          3. Оплата Stripe → подключу<br><br>
+          Скину ссылки как сделаю.
+          <div class="msg-time">12:31</div>
+        </div>
+        <div class="msg-avatar">AI</div>
+      </div>
+      <div class="msg msg-ai">
+        <div class="msg-bubble">
+          <span class="check">✔</span> Готово:<br>
+          🔗 Лендинг: deadline-ai.github.io/your-course<br>
+          🤖 Бот: @your_course_bot<br>
+          💳 Оплата подключена<br><br>
+          Ссылки уже работают, тестируй!
+          <div class="msg-time">13:45</div>
+        </div>
+        <div class="msg-avatar">AI</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENARIOS -->
+<section id="scenarios">
+  <div class="container">
+    <div class="section-label">✦ Возможности</div>
+    <h2 class="section-title">Что он умеет</h2>
+    <p class="section-sub">Один агент закрывает задачи, для которых обычно нужна целая команда.</p>
+    <div class="scenarios">
+
+      <div class="scenario">
+        <div class="scenario-icon">📝</div>
+        <h3>Контент и тексты</h3>
+        <p>Посты для Telegram, Instagram, YouTube. Статьи, сценарии, рассылки. С картинками и дизайном. Сказал тему — готов контент на неделю.</p>
+        <span class="scenario-tag">Копирайтер</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">🌐</div>
+        <h3>Сайты и лендинги</h3>
+        <p>Создаёт сайты с нуля — от лендинга до интернет-магазина. Подключает домен, Stripe, Telegram-бота для выдачи. Работает через час после задачи.</p>
+        <span class="scenario-tag">Разработчик</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">🤖</div>
+        <h3>Telegram-боты и автоматизация</h3>
+        <p>Боты для записи, выдачи курсов, автоворонок, лидогенерации. Скрипты для автоматизации рутины. Парсинг данных, интеграции между сервисами.</p>
+        <span class="scenario-tag">Автоматизация</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">🎨</div>
+        <h3>Дизайн и визуал</h3>
+        <p>Генерирует изображения для постов, обложки курсов, баннеры, логотипы. Создаёт короткие видео и анимацию. Единый стиль под ваш бренд.</p>
+        <span class="scenario-tag">Дизайнер</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">📅</div>
+        <h3>Календарь и органайзинг</h3>
+        <p>Напоминает о задачах, управляет Google Календарём, планирует день. Помнит все договорённости. Не даёт забыть важное.</p>
+        <span class="scenario-tag">Ассистент</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">🔍</div>
+        <h3>Исследования и аналитика</h3>
+        <p>Ищет информацию в интернете, анализирует конкурентов, собирает данные. Мониторит цены, новости, аудитории. Всё в одном чате.</p>
+        <span class="scenario-tag">Аналитик</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">💻</div>
+        <h3>Управление компьютером</h3>
+        <p>Может сесть за ваш ПК: зайти в админку, поменять цену, выгрузить отчёт, настроить CRM, заполнить таблицы. Ты смотришь — он делает.</p>
+        <span class="scenario-tag">Техподдержка</span>
+      </div>
+
+      <div class="scenario">
+        <div class="scenario-icon">🧠</div>
+        <h3>Память и база знаний</h3>
+        <p>Помнит всё о ваших проектах и клиентах. Ведёт базу знаний автоматически. Не надо повторять или искать в переписке — просто спроси.</p>
+        <span class="scenario-tag">Второй мозг</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOR INFOBIZ -->
+<section>
+  <div class="container" style="text-align:center">
+    <div class="section-label">✦ Инфобизнес</div>
+    <h2 class="section-title">Запусти курс без команды</h2>
+    <p class="section-sub" style="margin:0 auto 48px">
+      Один агент делает то, для чего обычно нанимают 3-4 человека:<br>
+      копирайтер + дизайнер + разработчик + маркетолог
+    </p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;text-align:left">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">💡</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Структура курса</h4>
+        <p style="font-size:13px;color:var(--mute)">Мозговой штурм → программа → план уроков</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">✍️</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Написание уроков</h4>
+        <p style="font-size:13px;color:var(--mute)">Тексты, конспекты, сценарии</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">🎨</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Обложки и визуал</h4>
+        <p style="font-size:13px;color:var(--mute)">Готовые креативы под курс</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">🌐</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Лендинг + бот</h4>
+        <p style="font-size:13px;color:var(--mute)">Сайт с оплатой и выдачей</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">📣</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Контент на неделю</h4>
+        <p style="font-size:13px;color:var(--mute)">Посты, сторис, рилс</p>
+      </div>
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px">
+        <div style="font-size:32px;margin-bottom:8px">📊</div>
+        <h4 style="font-size:15px;margin-bottom:4px">Аналитика</h4>
+        <p style="font-size:13px;color:var(--mute)">Конверсии, улучшения</p>
+      </div>
+    </div>
+    <div style="margin-top:40px">
+      <p style="font-size:14px;color:var(--mute);max-width:500px;margin:0 auto">
+        <strong style="color:var(--text)">$200/мес</strong> — вместо найма команды за $4000-6000
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing">
+  <div class="container">
+    <div class="section-label">✦ Тарифы</div>
+    <h2 class="section-title">Выбери свой план</h2>
+    <p class="section-sub">Платишь раз в месяц — пользуешься каждый день.</p>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <div class="pricing-name">Executive</div>
+        <div class="pricing-price">$100<span>/мес</span></div>
+        <div class="pricing-desc">Личный AI-ассистент для предпринимателя</div>
+        <ul class="pricing-features">
+          <li>Агент в Telegram 24/7</li>
+          <li>Голосовые сообщения</li>
+          <li>Управление календарём</li>
+          <li>Поиск и анализ информации</li>
+          <li>Создание документов</li>
+          <li>Память и база знаний</li>
+          <li>Напоминания и планирование</li>
+        </ul>
+        <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-ghost" style="width:100%;text-align:center">Выбрать</a>
+      </div>
+      <div class="pricing-card featured">
+        <div class="pricing-name">Studio</div>
+        <div class="pricing-price">$200<span>/мес</span></div>
+        <div class="pricing-desc">Полноценный digital-отдел для инфобизнеса и стартапов</div>
+        <ul class="pricing-features">
+          <li>Всё из Executive</li>
+          <li>Создание сайтов и лендингов</li>
+          <li>Telegram-боты и автоворонки</li>
+          <li>Генерация изображений и дизайна</li>
+          <li>Видеоконтент и анимация</li>
+          <li>Управление компьютером</li>
+          <li>Автоматизация и скрипты</li>
+          <li>Анализ конкурентов и рынка</li>
+        </ul>
+        <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-primary" style="width:100%;text-align:center">✦ Выбрать Studio</a>
+      </div>
+      <div class="pricing-card">
+        <div class="pricing-name">Agency</div>
+        <div class="pricing-price">$400<span>/мес</span></div>
+        <div class="pricing-desc">Команда агентов для агентства или компании</div>
+        <ul class="pricing-features">
+          <li>До 3 агентов на разные задачи</li>
+          <li>Каждый с профилем (маркетинг, продажи, техника)</li>
+          <li>Полный функционал Studio на каждого</li>
+          <li>Единая база знаний</li>
+          <li>Приоритетная поддержка</li>
+          <li>Выделенный сервер</li>
+        </ul>
+        <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-ghost" style="width:100%;text-align:center">Выбрать</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq">
+  <div class="container">
+    <div class="section-label">✦ FAQ</div>
+    <h2 class="section-title">Частые вопросы</h2>
+    <div class="faq-grid">
+      <div class="faq-item">
+        <h4>Как подключиться?</h4>
+        <p>Пишешь в Telegram @deadline_corp → оплачиваешь → получаешь доступ к агенту. Всё. Настройка занимает пару часов.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Это работает на русском?</h4>
+        <p>Да, на русском и английском. Понимает голосовые. Отвечает текстом и голосом.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Какие гарантии?</h4>
+        <p>Первая неделя — бесплатно, чтобы оценить. Не зайдёт — вернём деньги. Без вопросов.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Что нужно с моей стороны?</h4>
+        <p>Только Telegram. Всё остальное делает агент: регистрирует сервисы, подключает API, настраивает.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Безопасно? Мои данные не утекут?</h4>
+        <p>Агент работает на выделенном сервере. Данные хранятся в вашей базе знаний. Доступа к вашим паролям нет без вашего разрешения.</p>
+      </div>
+      <div class="faq-item">
+        <h4>Может заменить сотрудника?</h4>
+        <p>Заменяет 3-5 человек на рутинных задачах: копирайтер, дизайнер, разработчик, ассистент, аналитик. Сложные креативные решения всё ещё за вами.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="container">
+    <h2>Готов попробовать?</h2>
+    <p>Напиши в Telegram — через час у тебя будет свой AI-агент.</p>
+    <a href="https://t.me/deadline_corp" target="_blank" class="btn btn-primary">✦ Написать в Telegram</a>
+    <div class="cta-note">Без регистраций и смс. Просто напиши «Привет»</div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <p>✦ DEADLINE AI · с 2025 · основан в Паттайе 🌴</p>
+    <p style="margin-top:8px">
+      <a href="https://t.me/deadline_corp" target="_blank">Telegram</a>
+      &nbsp;·&nbsp;
+      <a href="mailto:corpdeadline@gmail.com">corpdeadline@gmail.com</a>
+    </p>
+    <p style="margin-top:16px;font-size:12px">© 2025-2026 DEADLINE. Все права защищены.</p>
+  </div>
+</footer>
+
+</body>
+</html>
