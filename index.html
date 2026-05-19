@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-<title>DEADLINE AI — Карманный бот, который делает работу за тебя</title>
-<meta name="description" content="Скажи голосом в Telegram — он пишет в таблицу, отвечает клиентам, ведёт календарь. Без приложений и онбординга. Запуск за 2-3 дня.">
+<title>DEADLINE AI — Голосовой бот в Telegram. От $5/мес или Pro под задачу</title>
+<meta name="description" content="Два пакета: Базовый — $5/мес для личных задач, Pro — голосовой AI-сотрудник для бизнеса. Опиши задачу — бот предложит пакет.">
 <meta name="theme-color" content="#C76A2D">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1354,6 +1354,371 @@ button, .btn, a {
   word-wrap: break-word;
 }
 
+/* ═════════ PACKAGE BADGES ═════════ */
+.pkg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border-radius: 100px;
+  margin-left: 10px;
+  vertical-align: middle;
+}
+.pkg-badge.basic {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+.pkg-badge.pro {
+  background: #1A1410;
+  color: #F5E6CC;
+}
+.pkg-badge.pro::before {
+  content: '⚡';
+  font-size: 12px;
+}
+
+/* ═════════ WIZARD SECTION ═════════ */
+.wizard-block {
+  background: linear-gradient(135deg, #1A1410 0%, #241A11 50%, #2F2015 100%);
+  color: #FFF;
+  border-radius: var(--radius-xl);
+  padding: 64px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.wizard-block::before {
+  content: '';
+  position: absolute;
+  top: -100px; right: -100px;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+  pointer-events: none;
+}
+.wizard-block::after {
+  content: '';
+  position: absolute;
+  bottom: -150px; left: -50px;
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(199,106,45,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .wizard-block { padding: 36px 22px; border-radius: var(--radius-lg); }
+}
+.wizard-inner { position: relative; z-index: 2; max-width: 720px; margin: 0 auto; text-align: center; }
+.wizard-inner .h-eyebrow { color: var(--accent); }
+.wizard-inner h2 { color: #FFF; margin-bottom: 14px; }
+.wizard-inner .lead { color: rgba(255,255,255,0.7); margin-bottom: 36px; }
+
+.wizard-input-wrap {
+  position: relative;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: var(--radius-lg);
+  padding: 6px;
+  transition: all 200ms;
+}
+.wizard-input-wrap:focus-within {
+  border-color: var(--accent);
+  background: rgba(255,255,255,0.1);
+  box-shadow: 0 0 0 4px rgba(199,106,45,0.15);
+}
+.wizard-textarea {
+  width: 100%;
+  min-height: 100px;
+  background: transparent;
+  border: 0;
+  outline: none;
+  color: #FFF;
+  font-family: inherit;
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 18px 20px 8px;
+  resize: vertical;
+}
+.wizard-textarea::placeholder { color: rgba(255,255,255,0.4); }
+.wizard-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 8px 8px 16px;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wizard-hint {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.04em;
+}
+.wizard-submit {
+  background: var(--accent);
+  color: #FFF;
+  padding: 13px 24px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 200ms;
+  letter-spacing: -0.005em;
+}
+.wizard-submit:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(199,106,45,0.42);
+}
+.wizard-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+.wizard-examples {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+.wizard-chip {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  padding: 7px 14px;
+  border-radius: 100px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  color: rgba(255,255,255,0.7);
+  cursor: pointer;
+  transition: all 150ms;
+}
+.wizard-chip:hover {
+  background: rgba(255,255,255,0.12);
+  color: #FFF;
+  border-color: var(--accent);
+}
+
+.wizard-thinking {
+  display: none;
+  margin-top: 28px;
+  text-align: center;
+  color: rgba(255,255,255,0.6);
+  font-size: 14px;
+  font-family: 'JetBrains Mono', monospace;
+  letter-spacing: 0.04em;
+}
+.wizard-thinking.show { display: block; }
+.wizard-thinking::after {
+  content: '';
+  display: inline-block;
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-left: 8px;
+  animation: thinkDot 1.4s infinite;
+}
+@keyframes thinkDot {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+.wizard-result {
+  display: none;
+  margin-top: 32px;
+  background: #FFF;
+  color: var(--text);
+  border-radius: var(--radius-lg);
+  padding: 32px;
+  text-align: left;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+  animation: fadeUp 400ms ease;
+}
+.wizard-result.show { display: block; }
+.wizard-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+}
+.wizard-result-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+.wizard-result-pkg {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 100px;
+  letter-spacing: 0.06em;
+}
+.wizard-result-pkg.basic {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+.wizard-result-pkg.pro {
+  background: #1A1410;
+  color: #F5E6CC;
+}
+.wizard-result h3 {
+  font-size: 24px;
+  margin-bottom: 12px;
+  color: var(--text);
+}
+.wizard-result p {
+  font-size: 15px;
+  color: var(--text-mute);
+  margin-bottom: 22px;
+  line-height: 1.55;
+}
+.wizard-result-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.wizard-result-cta {
+  background: var(--accent);
+  color: #FFF;
+  padding: 13px 22px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: all 200ms;
+}
+.wizard-result-cta:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+.wizard-result-cta.alt {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.wizard-result-cta.alt:hover { background: var(--border-strong); transform: none; }
+
+/* ═════════ HOW IT WORKS — TWO PATHS ═════════ */
+.paths {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 28px;
+  margin-top: 32px;
+}
+@media (max-width: 900px) {
+  .paths { grid-template-columns: 1fr; }
+}
+.path {
+  background: var(--surface);
+  border-radius: var(--radius-xl);
+  padding: 36px;
+  border: 1px solid var(--border);
+  position: relative;
+}
+.path.pro {
+  background: linear-gradient(180deg, #1A1410 0%, #241A11 100%);
+  color: #F5E6CC;
+  border-color: #2F2015;
+}
+.path.pro .path-steps li { color: rgba(245,230,204,0.85); }
+.path-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.path-head h3 {
+  font-size: 22px;
+  font-weight: 700;
+  color: inherit;
+}
+.path.pro .path-head h3 { color: #FFF; }
+.path-tag {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 5px 11px;
+  border-radius: 100px;
+}
+.path.basic .path-tag {
+  background: var(--accent-soft);
+  color: var(--accent-dark);
+}
+.path.pro .path-tag {
+  background: var(--accent);
+  color: #FFF;
+}
+.path-sub {
+  font-size: 14px;
+  color: var(--text-mute);
+  margin-bottom: 24px;
+}
+.path.pro .path-sub { color: rgba(245,230,204,0.65); }
+.path-steps {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  counter-reset: pstep;
+  margin-bottom: 24px;
+}
+.path-steps li {
+  counter-increment: pstep;
+  display: flex;
+  gap: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.path-steps li::before {
+  content: counter(pstep);
+  flex-shrink: 0;
+  width: 26px; height: 26px;
+  background: var(--accent);
+  color: #FFF;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  font-weight: 700;
+}
+.path-cta {
+  display: inline-block;
+  margin-top: 4px;
+  padding: 12px 22px;
+  background: var(--accent);
+  color: #FFF;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 700;
+  transition: all 200ms;
+}
+.path-cta:hover {
+  background: var(--accent-dark);
+  transform: translateY(-1px);
+}
+.path.pro .path-cta {
+  background: var(--accent);
+  color: #FFF;
+}
+
 /* ═════════ ANIMATIONS ═════════ */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
@@ -1381,11 +1746,12 @@ button, .btn, a {
       DEADLINE AI
     </a>
     <div class="nav-links">
+      <a href="#wizard">Подобрать пакет</a>
       <a href="#how">Как работает</a>
       <a href="#pricing">Цены</a>
       <a href="#faq">Вопросы</a>
     </div>
-    <a href="#cta" class="nav-cta">Получить настройку</a>
+    <a href="#wizard" class="nav-cta">Подобрать пакет</a>
   </div>
 </nav>
 
@@ -1394,23 +1760,23 @@ button, .btn, a {
   <div class="container">
     <div class="hero-grid">
       <div class="hero-text">
-        <span class="h-eyebrow">// Карманный бот в Telegram</span>
+        <span class="h-eyebrow">// Голосовой бот в Telegram</span>
         <h1 class="h-display">
           Скажи голосом —<br>
           <span class="accent-bg">он сделает</span> за тебя.
         </h1>
         <p class="lead hero-sub">
-          Telegram-бот, который ведёт твои таблицы, отвечает клиентам,
-          пишет письма и помнит за тебя. Без приложений, без онбординга,
-          без обучения. Просто говоришь — он делает.
+          Два пакета. <strong>Базовый</strong> — $5/мес, узкая задача,
+          подключается за 90 секунд. <strong>Pro</strong> — голосовой AI-сотрудник:
+          пишет код, ведёт дашборды, проверяет документы пока ты у бассейна.
         </p>
         <div class="hero-cta-row">
-          <a href="#cta" class="btn btn-primary btn-lg btn-arrow">Получить настройку</a>
-          <a href="#demo" class="btn btn-ghost btn-lg">Посмотреть как работает</a>
+          <a href="#wizard" class="btn btn-primary btn-lg btn-arrow">Подобрать пакет под задачу</a>
+          <a href="#pricing" class="btn btn-ghost btn-lg">Смотреть цены</a>
         </div>
         <div class="hero-meta">
-          <div class="hero-meta-item"><span class="check">✓</span> Запуск за 2-3 дня</div>
-          <div class="hero-meta-item"><span class="check">✓</span> 30 дней гарантия</div>
+          <div class="hero-meta-item"><span class="check">✓</span> От $5/мес</div>
+          <div class="hero-meta-item"><span class="check">✓</span> Отмена в 1 клик</div>
           <div class="hero-meta-item"><span class="check">✓</span> Без приложений</div>
         </div>
       </div>
@@ -1468,11 +1834,67 @@ button, .btn, a {
 <section class="trust-bar">
   <div class="container">
     <div class="trust-row">
-      <div class="trust-item"><strong>2-3</strong> дня до запуска</div>
+      <div class="trust-item"><strong>$5</strong> базовый пакет / мес</div>
+      <div class="trust-item"><strong>90 сек</strong> до первого запуска</div>
       <div class="trust-item"><strong>24/7</strong> работает без выходных</div>
-      <div class="trust-item"><strong>30</strong> дней гарантия возврата</div>
       <div class="trust-item"><strong>0</strong> приложений ставить</div>
-      <div class="trust-item"><strong>$20</strong> в месяц после запуска</div>
+      <div class="trust-item"><strong>1 клик</strong> на отмену</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═════════ WIZARD — описать задачу → бот предложит пакет ═════════ -->
+<section class="section" id="wizard">
+  <div class="container">
+    <div class="section-head">
+      <span class="h-eyebrow">// AI-помощник по подбору</span>
+      <h2 class="h-1">Опиши задачу — бот предложит пакет.</h2>
+      <p class="lead">Не уверен, какой пакет тебе подходит? Расскажи своими словами что нужно автоматизировать — за 2 секунды получишь рекомендацию.</p>
+    </div>
+
+    <div class="wizard-block">
+      <div class="wizard-inner">
+        <span class="h-eyebrow">// Опиши задачу</span>
+        <h2 class="h-2">Что хочешь поручить боту?</h2>
+        <p class="lead">Голосом, текстом, своими словами. Чем подробнее — тем точнее подбор.</p>
+
+        <div class="wizard-input-wrap">
+          <textarea
+            id="wizard-input"
+            class="wizard-textarea"
+            placeholder="Например: «Хочу вести учёт расходов голосом — кофе 180 бат, такси 200, чтобы в конце месяца была сводка»"></textarea>
+          <div class="wizard-actions">
+            <span class="wizard-hint">Подсказка: упоминай числа, инструменты, контекст</span>
+            <button id="wizard-submit" class="wizard-submit" type="button">
+              Подобрать пакет
+              <span>→</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="wizard-examples">
+          <span class="wizard-chip" data-example="Хочу записывать тренировки голосом — какой вес, сколько подходов, чтобы потом был прогресс">📊 Учёт тренировок</span>
+          <span class="wizard-chip" data-example="Записывать расходы голосом и видеть сколько потратил за неделю по категориям">💰 Личные финансы</span>
+          <span class="wizard-chip" data-example="Чтобы голосовой бот писал код за меня, проверял PR и деплоил на сервер пока я гуляю">⚡ Код пишет вместо меня</span>
+          <span class="wizard-chip" data-example="Хочу управлять бизнесом голосом — смотреть продажи, проверять отчёты сотрудников, контролировать дашборды">📈 Дашборды и команда</span>
+          <span class="wizard-chip" data-example="Подключиться к моему компьютеру удалённо и работать с документами пока я у бассейна">🏖 Удалённая работа</span>
+        </div>
+
+        <div id="wizard-thinking" class="wizard-thinking">Анализирую задачу</div>
+
+        <div id="wizard-result" class="wizard-result">
+          <div class="wizard-result-header">
+            <span class="wizard-result-label">Рекомендация:</span>
+            <span id="wizard-result-pkg" class="wizard-result-pkg basic">Базовый · $5/мес</span>
+          </div>
+          <h3 id="wizard-result-title">Тебе подходит Базовый пакет</h3>
+          <p id="wizard-result-text">Твоя задача — узкая и понятная. Базового пакета хватит: бот настраивается за 90 секунд, $5/мес, отмена в один клик.</p>
+          <div class="wizard-result-actions">
+            <a id="wizard-result-cta" href="#pricing" class="wizard-result-cta">Подключить за $5 →</a>
+            <a href="#wizard" id="wizard-reset" class="wizard-result-cta alt">Описать ещё задачу</a>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </section>
@@ -1557,7 +1979,7 @@ button, .btn, a {
   <div class="container">
     <div class="use-case">
       <div class="uc-text">
-        <div class="uc-label">// Use case 01</div>
+        <div class="uc-label">// Use case 01 <span class="pkg-badge basic">Базовый · $5</span></div>
         <h2 class="h-1">Excel, который<br>тебя слышит.</h2>
         <p>Учёт тренировок, расходов, веса, настроения, инвестиций. Всё, что ты обещал себе вести — теперь ведётся голосом. За 4 секунды на запись.</p>
         <ul class="uc-list">
@@ -1612,7 +2034,7 @@ button, .btn, a {
   <div class="container">
     <div class="use-case reverse">
       <div class="uc-text">
-        <div class="uc-label">// Use case 02</div>
+        <div class="uc-label">// Use case 02 <span class="pkg-badge basic">Базовый · $5</span></div>
         <h2 class="h-1">Личный секретарь<br>в кармане.</h2>
         <p>Диктуешь дело — он напоминает. Письмо — пишет черновик. Встречу — добавляет в календарь. Завтра ты не пропустишь ничего важного.</p>
         <ul class="uc-list">
@@ -1668,7 +2090,7 @@ button, .btn, a {
   <div class="container">
     <div class="use-case">
       <div class="uc-text">
-        <div class="uc-label">// Use case 03</div>
+        <div class="uc-label">// Use case 03 <span class="pkg-badge pro">Pro</span></div>
         <h2 class="h-1">Офис, который<br>помещается в телефон.</h2>
         <p>Диктуй договор — формируется в Google Docs. Опиши отчёт — сводится в таблицу. Управляй бизнесом голосом, а не ноутбуком в кафе.</p>
         <ul class="uc-list">
@@ -1719,6 +2141,68 @@ button, .btn, a {
   </div>
 </section>
 
+<!-- ═════════ USE CASE 4: PRO OPERATOR ═════════ -->
+<section class="section">
+  <div class="container">
+    <div class="use-case reverse">
+      <div class="uc-text">
+        <div class="uc-label">// Use case 04 <span class="pkg-badge pro">Pro · флагман</span></div>
+        <h2 class="h-1">Удалённый сотрудник,<br>который работает<br>пока ты у бассейна.</h2>
+        <p>Голосовой AI-агент с доступом к твоему компьютеру и сервисам. Пишет код, ведёт дашборды, проверяет документы и сотрудников — а ты управляешь голосом из шезлонга. <strong>Самый горячий сегмент 2026</strong>: Anthropic Computer Use, Devin, Cognition — все строят это. У нас — голосом через Telegram.</p>
+        <ul class="uc-list">
+          <li>Пишет и проверяет код, деплоит на сервер, чинит баги</li>
+          <li>Смотрит за продажами и дашбордами — присылает аномалии</li>
+          <li>Проверяет отчёты сотрудников, контракты, KP</li>
+          <li>Подключается к твоему компьютеру удалённо (RDP/SSH)</li>
+          <li>Поднимает сайты и тестовые серверы голосом</li>
+          <li>Настройка под твой бизнес — индивидуально</li>
+        </ul>
+        <div class="uc-quote">
+          «Был айтишник в офисе с 9 до 18. Теперь его место занял Pro-бот. Я диктую с пляжа: «задеплой v2.3 на staging» — через 10 минут сообщение «готово, тесты зелёные». В чистую экономия $3500/мес.»
+          <span class="uc-quote-author">Сергей М., founder · Пхукет</span>
+        </div>
+      </div>
+      <div class="uc-mockup">
+        <div class="phone">
+          <div class="phone-notch"></div>
+          <div class="phone-screen">
+            <div class="tg-header">
+              <div class="tg-avatar" style="background: linear-gradient(135deg, #C76A2D, #1A1410);">DA</div>
+              <div class="tg-title-block">
+                <div class="tg-title">DEADLINE AI · Pro</div>
+                <div class="tg-status">Operator · online</div>
+              </div>
+            </div>
+            <div class="tg-chat">
+              <div class="tg-msg voice"><div class="voice-play">▶</div><div class="voice-wave"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div><div class="voice-duration">0:08</div></div>
+              <div class="tg-msg bot" style="max-width: 95%;">
+                ⚙️ Деплой v2.3 → staging<br>
+                <span style="font-size: 12px; color: var(--text-mute);">CI/CD: pull → test → build → deploy</span><br>
+                <div style="background: #1A1410; color: #7AC79A; font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                  ✓ tests: 142/142<br>
+                  ✓ deployed: staging.app<br>
+                  ⏱ 4m 12s
+                </div>
+                <span class="time">14:18</span>
+              </div>
+              <div class="tg-msg user">проверь почему вчера упали продажи<span class="time">14:22</span></div>
+              <div class="tg-msg bot">
+                📉 Анализ за 13.05:<br>
+                • Продажи −34% vs среднее<br>
+                • Причина: <strong>лендинг падал 11:00-13:30</strong> (502)<br>
+                • Потеряно ~$1 800<br>
+                <span style="color: var(--accent); font-size: 12px;">↓ Полный отчёт + лог</span>
+                <span class="time">14:22</span>
+              </div>
+            </div>
+            <div class="tg-input"><div class="tg-input-field">Сообщение...</div><div class="tg-mic">🎤</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ═════════ ROI CALCULATOR ═════════ -->
 <section class="section">
   <div class="container">
@@ -1744,7 +2228,7 @@ button, .btn, a {
         <div class="roi-result">
           <div class="roi-label">Возвращает в месяц</div>
           <div class="roi-value"><span id="roi-money">640</span> $</div>
-          <div class="roi-suffix"><span id="roi-time">32</span> часа жизни обратно · окупится за <span id="roi-payback">1</span> неделю</div>
+          <div class="roi-suffix"><span id="roi-time">32</span> часа жизни обратно · базовый окупается за <span id="roi-payback">15 минут</span> работы</div>
         </div>
       </div>
     </div>
@@ -1765,60 +2249,84 @@ button, .btn, a {
           <tr>
             <th></th>
             <th>Excel / Notion</th>
-            <th>ChatGPT</th>
+            <th>ChatGPT $20</th>
             <th>Помощник $1500/мес</th>
-            <th class="featured">DEADLINE AI</th>
+            <th>Базовый $5</th>
+            <th class="featured">Pro</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>Работает голосом</td>
+            <td>Работает голосом в TG</td>
             <td class="no">—</td>
-            <td class="partial">приложение</td>
+            <td class="no">—</td>
             <td class="yes">да</td>
-            <td class="featured"><span class="yes">да, в Telegram</span></td>
+            <td><span class="yes">да</span></td>
+            <td class="featured"><span class="yes">да</span></td>
           </tr>
           <tr>
             <td>Доступен 24/7</td>
             <td class="yes">да</td>
             <td class="yes">да</td>
             <td class="no">9-18</td>
+            <td><span class="yes">24/7</span></td>
             <td class="featured"><span class="yes">24/7</span></td>
           </tr>
           <tr>
-            <td>Помнит твою историю</td>
-            <td class="partial">сам ищешь</td>
-            <td class="partial">в одной сессии</td>
-            <td class="yes">да</td>
-            <td class="featured"><span class="yes">да, всегда</span></td>
-          </tr>
-          <tr>
-            <td>Ведёт твои таблицы</td>
+            <td>Ведёт твои таблицы и календарь</td>
             <td class="partial">руками</td>
             <td class="no">—</td>
             <td class="yes">да</td>
-            <td class="featured"><span class="yes">автоматически</span></td>
+            <td><span class="yes">да</span></td>
+            <td class="featured"><span class="yes">да</span></td>
+          </tr>
+          <tr>
+            <td>Пишет код и деплоит</td>
+            <td class="no">—</td>
+            <td class="partial">копируешь сам</td>
+            <td class="no">—</td>
+            <td class="no">—</td>
+            <td class="featured"><span class="yes">да, голосом</span></td>
+          </tr>
+          <tr>
+            <td>Работает на твоём компе</td>
+            <td class="no">—</td>
+            <td class="no">—</td>
+            <td class="yes">сидит рядом</td>
+            <td class="no">—</td>
+            <td class="featured"><span class="yes">RDP/SSH</span></td>
+          </tr>
+          <tr>
+            <td>Дашборды и аномалии</td>
+            <td class="partial">смотришь сам</td>
+            <td class="no">—</td>
+            <td class="partial">если умеет</td>
+            <td class="no">—</td>
+            <td class="featured"><span class="yes">алерты в TG</span></td>
           </tr>
           <tr>
             <td>Без онбординга</td>
-            <td class="partial">5 минут</td>
-            <td class="partial">2 минуты</td>
+            <td class="partial">5 мин</td>
+            <td class="partial">2 мин</td>
             <td class="no">2 недели</td>
-            <td class="featured"><span class="yes">сразу</span></td>
-          </tr>
-          <tr>
-            <td>Цена в месяц</td>
-            <td class="partial">$0-15</td>
-            <td class="partial">$20</td>
-            <td class="no">$1500+</td>
-            <td class="featured"><strong>$20</strong></td>
+            <td><span class="yes">90 сек</span></td>
+            <td class="featured"><span class="partial">созвон 30 мин</span></td>
           </tr>
           <tr>
             <td>Не уходит в отпуск</td>
             <td class="yes">да</td>
             <td class="yes">да</td>
             <td class="no">уходит</td>
+            <td><span class="yes">никогда</span></td>
             <td class="featured"><span class="yes">никогда</span></td>
+          </tr>
+          <tr>
+            <td><strong>Цена</strong></td>
+            <td><strong>$0-15</strong></td>
+            <td><strong>$20</strong></td>
+            <td class="no"><strong>$1500+</strong></td>
+            <td><strong>$5/мес</strong></td>
+            <td class="featured"><strong>от $299/мес</strong></td>
           </tr>
         </tbody>
       </table>
@@ -1826,51 +2334,58 @@ button, .btn, a {
   </div>
 </section>
 
-<!-- ═════════ HOW IT WORKS ═════════ -->
+<!-- ═════════ HOW IT WORKS — TWO PATHS ═════════ -->
 <section class="section" id="how">
   <div class="container">
     <div class="section-head">
       <span class="h-eyebrow">// Как это работает</span>
-      <h2 class="h-1">4 шага. От заявки до первого результата.</h2>
-      <p class="lead">Ты ничего не настраиваешь. Не ставишь приложения. Не учишься. Мы делаем всё за тебя.</p>
+      <h2 class="h-1">Два пакета — два пути.</h2>
+      <p class="lead">Базовый — подключаешь сам за 90 секунд. Pro — обсуждаем задачу на созвоне и собираем агента под тебя.</p>
     </div>
 
-    <div class="steps">
-      <div class="step">
-        <div class="step-icon">📝</div>
-        <h3>Оставляешь заявку</h3>
-        <p>Имя, твой Telegram, пару слов о задаче. 30 секунд.</p>
-        <span class="step-time">30 сек</span>
+    <div class="paths">
+      <!-- BASIC PATH -->
+      <div class="path basic">
+        <div class="path-head">
+          <h3>Базовый · self-serve</h3>
+          <span class="path-tag">$5/мес</span>
+        </div>
+        <p class="path-sub">Узкая задача. Финансы, тренировки, заметки, календарь. Подключаешься за 90 секунд.</p>
+        <ul class="path-steps">
+          <li>Нажимаешь «Подключить за $5» — карта, секунда</li>
+          <li>Бот пишет в Telegram, задаёт 5 вопросов анкеты</li>
+          <li>Подключаем твои Google Sheets / Calendar за минуту</li>
+          <li>Говоришь голосом — бот делает. Отмена в 1 клик</li>
+        </ul>
+        <a href="#pricing" class="path-cta">Подключить за $5 →</a>
       </div>
-      <div class="step">
-        <div class="step-icon">💬</div>
-        <h3>Связываемся в TG</h3>
-        <p>В течение часа пишем тебе лично. Разбираем задачу, показываем бота вживую.</p>
-        <span class="step-time">~ 1 час</span>
-      </div>
-      <div class="step">
-        <div class="step-icon">⚙️</div>
-        <h3>Настраиваем под тебя</h3>
-        <p>Подключаем твои таблицы, календарь, шаблоны. Ты в это время живёшь.</p>
-        <span class="step-time">2-3 дня</span>
-      </div>
-      <div class="step">
-        <div class="step-icon">🚀</div>
-        <h3>Пользуешься голосом</h3>
-        <p>Открываешь Telegram, говоришь — он делает. Поддержка 30 дней включена.</p>
-        <span class="step-time">∞</span>
+
+      <!-- PRO PATH -->
+      <div class="path pro">
+        <div class="path-head">
+          <h3>Pro · с настройкой</h3>
+          <span class="path-tag">от $299/мес</span>
+        </div>
+        <p class="path-sub">Сложная задача. Код, дашборды, удалённая работа на компе. Собираем агента под тебя.</p>
+        <ul class="path-steps">
+          <li>Оставляешь заявку — описываешь задачи и контекст</li>
+          <li>Созвон 30 минут — разбираем сценарии и доступы</li>
+          <li>Настраиваем агента 2-5 дней: код, тесты, безопасность</li>
+          <li>Демо в твоём TG → оплата → агент в работе</li>
+        </ul>
+        <a href="#cta" class="path-cta">Записаться на демо Pro →</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ═════════ PRICING ═════════ -->
+<!-- ═════════ PRICING — 2 ПАКЕТА ═════════ -->
 <section class="section section-surface" id="pricing">
   <div class="container">
     <div class="section-head">
       <span class="h-eyebrow">// Тарифы</span>
-      <h2 class="h-1">Один раз настройка.<br>$20 в месяц дальше.</h2>
-      <p class="lead">Никаких скрытых платежей. Никаких лимитов на использование. Отмена в один клик.</p>
+      <h2 class="h-1">Два пакета. Никаких скрытых платежей.</h2>
+      <p class="lead">Один пакет — для личных задач за $5. Второй — для серьёзной работы пока ты у бассейна.</p>
     </div>
 
     <div class="pricing-toggle">
@@ -1879,70 +2394,55 @@ button, .btn, a {
       <button data-cur="RUB">RUB</button>
     </div>
 
-    <div class="pricing-grid">
-      <!-- START -->
+    <div class="pricing-grid pricing-grid-2">
+      <!-- BASIC -->
       <div class="price-card">
-        <div class="price-name">// Start</div>
+        <div class="price-name">// Базовый <span class="pkg-badge basic" style="margin-left:6px">для себя</span></div>
         <div class="price-amount">
-          <span class="price-value" data-usd="99" data-thb="3490" data-rub="9990">99</span>
+          <span class="price-value" data-usd="5" data-thb="170" data-rub="490">5</span>
           <span class="price-currency" data-curr-sym="$">$</span>
+          <span class="price-period">/мес</span>
         </div>
-        <div class="price-period">единоразово · запуск</div>
-        <div class="price-sub">+ <strong>$20/мес</strong> со второго месяца</div>
+        <div class="price-sub">Без setup-fee. <strong>Подключение за 90 секунд.</strong> Отмена в один клик.</div>
         <ul class="price-features">
-          <li>1 use case на выбор</li>
+          <li>Голосовой бот в Telegram 24/7</li>
+          <li>Учёт в Google Sheets (тренировки, расходы, привычки)</li>
+          <li>Заметки, напоминания, Google Calendar</li>
+          <li>Утренний дайджест с твоими делами</li>
+          <li>Распознавание голоса RU/EN/TH</li>
           <li>До 100 запросов в день</li>
-          <li>1 таблица / календарь / шаблон</li>
-          <li>Базовая настройка под тебя</li>
-          <li>Поддержка в Telegram 30 дней</li>
-          <li class="no">Кастомные интеграции</li>
-          <li class="no">Безлимит запросов</li>
+          <li class="no">Работа на твоём компе</li>
+          <li class="no">Код, дашборды, документы команды</li>
         </ul>
-        <a href="#cta" class="price-cta">Выбрать Start</a>
+        <a href="#cta" class="price-cta" data-pkg="basic">Подключить за $5 →</a>
       </div>
 
       <!-- PRO (featured) -->
       <div class="price-card featured">
-        <div class="price-name">// Pro</div>
+        <div class="price-name">// Pro <span class="pkg-badge pro" style="margin-left:6px">для бизнеса</span></div>
         <div class="price-amount">
-          <span class="price-value" data-usd="199" data-thb="6990" data-rub="19990">199</span>
+          <span class="price-value" data-usd="299" data-thb="9990" data-rub="29990">299</span>
           <span class="price-currency" data-curr-sym="$">$</span>
+          <span class="price-period">/мес</span>
         </div>
-        <div class="price-period">единоразово · запуск</div>
-        <div class="price-sub">+ <strong>$20/мес</strong> со второго месяца</div>
+        <div class="price-sub">Setup под задачу <strong>от $499</strong> разово. Созвон + настройка 2-5 дней.</div>
         <ul class="price-features">
-          <li><strong>Все 3 use case сразу</strong></li>
-          <li>До 500 запросов в день</li>
-          <li>5 таблиц / шаблонов под тебя</li>
-          <li>Утренний дайджест в TG</li>
-          <li>Поддержка в Telegram 60 дней</li>
-          <li>Приоритетная скорость ответа</li>
-          <li class="no">Кастомные интеграции</li>
+          <li><strong>Всё из Базового</strong> + расширенно</li>
+          <li>AI-агент пишет код, чинит баги, деплоит</li>
+          <li>Доступ к твоему компу (RDP/SSH туннель)</li>
+          <li>Мониторинг дашбордов, алерты в TG</li>
+          <li>Анализ продаж, отчётов сотрудников</li>
+          <li>Кастомные интеграции (CRM, API, БД)</li>
+          <li>Личный созвон + настройка под бизнес</li>
+          <li>Приоритетная поддержка SLA 24 ч</li>
         </ul>
-        <a href="#cta" class="price-cta">Выбрать Pro</a>
-      </div>
-
-      <!-- BUSINESS -->
-      <div class="price-card">
-        <div class="price-name">// Business</div>
-        <div class="price-amount">
-          <span class="price-value" data-usd="399" data-thb="13990" data-rub="39990">399</span>
-          <span class="price-currency" data-curr-sym="$">$</span>
-        </div>
-        <div class="price-period">единоразово · запуск</div>
-        <div class="price-sub">+ <strong>$20/мес</strong> со второго месяца</div>
-        <ul class="price-features">
-          <li>Все use case + кастомные</li>
-          <li><strong>Безлимит запросов</strong></li>
-          <li>Любое число таблиц/шаблонов</li>
-          <li>Интеграция с твоей CRM / API</li>
-          <li>Личный созвон 60 мин + обучение</li>
-          <li>Поддержка 90 дней + SLA 24 ч</li>
-          <li>Доработки под задачи</li>
-        </ul>
-        <a href="#cta" class="price-cta">Выбрать Business</a>
+        <a href="#cta" class="price-cta" data-pkg="pro">Записаться на демо Pro →</a>
       </div>
     </div>
+
+    <p class="center" style="margin-top: 32px; font-size: 13px; color: var(--text-soft); font-family: 'JetBrains Mono', monospace;">
+      Сомневаешься какой пакет? → <a href="#wizard" style="color: var(--accent); text-decoration: underline;">опиши задачу боту</a>
+    </p>
   </div>
 </section>
 
@@ -1955,9 +2455,9 @@ button, .btn, a {
         <div class="lbl">ДНЕЙ</div>
       </div>
       <div class="guarantee-text">
-        <span class="h-eyebrow">// Гарантия</span>
-        <h2 class="h-2">Не зашло за 30 дней — вернём деньги.</h2>
-        <p>Если за месяц использования не почувствуешь, что бот реально экономит твоё время — пишешь нам в Telegram, возвращаем оплату за настройку и подписку. Без вопросов, без удержаний, без "докажите, что пытались". Слово.</p>
+        <span class="h-eyebrow">// Без рисков</span>
+        <h2 class="h-2">Базовый — отмена в 1 клик. Pro — возврат 30 дней.</h2>
+        <p><strong>Базовый ($5/мес):</strong> пишешь в Telegram «отмена» — отключаем со следующего месяца, никаких удержаний. <strong>Pro:</strong> если за 30 дней агент не закрыл задачи из брифа — возвращаем 100% setup-fee и подписку за месяц. Без вопросов и без «докажите что пытались».</p>
       </div>
     </div>
   </div>
@@ -1973,36 +2473,36 @@ button, .btn, a {
 
     <div class="faq">
       <div class="faq-item">
-        <button class="faq-q">Что нужно от меня для запуска? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Только Telegram и Google-аккаунт. Всё остальное настраиваем мы. Никаких приложений ставить, ничего скачивать. Открыл Telegram — пользуешься.</p></div>
+        <button class="faq-q">Чем Базовый отличается от Pro? <span class="plus">+</span></button>
+        <div class="faq-a"><p><strong>Базовый ($5/мес)</strong> — узкая личная задача: учёт расходов, тренировок, привычек, заметки, напоминания. Бот живёт в твоём Telegram, не имеет доступа ни к чему кроме твоего Google-аккаунта.<br><br><strong>Pro (от $299/мес)</strong> — голосовой AI-сотрудник для бизнеса: пишет код, проверяет отчёты, ведёт дашборды, подключается к твоему компьютеру удалённо. Требует созвона и настройки под твою задачу.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Что нужно от меня для Базового? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Только Telegram и Google-аккаунт. Нажал «Подключить» → ввёл карту → бот написал тебе в TG → 5 вопросов анкеты → готово. Весь процесс 90 секунд. Никаких приложений и онбординга.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Как устроен Pro и что нужно от меня? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Оставляешь заявку → созваниваемся 30 минут (Zoom или Telegram Voice) → разбираем твои задачи и доступы (компьютер, дашборды, CRM, репозиторий) → 2-5 дней настраиваем агента под тебя → демо в TG → оплата → агент в работе. Подробное соглашение по безопасности и доступам — на созвоне.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q">А мои данные не утекут? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Все данные хранятся в твоём Google-аккаунте (таблицы, документы, календарь). У нас на сервере — только настройки бота. Чаты с ботом не хранятся дольше 30 дней. По запросу — полностью удалим всё.</p></div>
+        <div class="faq-a"><p><strong>Базовый:</strong> данные хранятся в твоём Google-аккаунте (таблицы, документы, календарь). У нас на сервере — только настройки бота, ничего больше. Чаты с ботом — не дольше 30 дней.<br><br><strong>Pro:</strong> все доступы — на твоём железе, через SSH-туннель/RDP с шифрованием. Логи и история — у тебя. Никаких third-party копий твоих данных.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q">Можно ли отменить подписку? <span class="plus">+</span></button>
-        <div class="faq-a"><p>В один клик. Пишешь в Telegram "отмена" — отключаем, $20 в следующем месяце не списываем. Все твои данные остаются у тебя. Никаких удержаний, никакого онбординга обратно.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Я не разбираюсь в технологиях — справлюсь? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Если умеешь писать в WhatsApp/Telegram — справишься. Никаких интерфейсов, кнопок, настроек. Только голос или текст. Всё остальное — наша работа.</p></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">Что если бот не понимает мой акцент? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Распознавание работает на русском, английском, тайском с любыми акцентами (используем те же модели, что Google Voice). За 60 дней использования мы ни разу не получили жалобу на распознавание. Если вдруг — настроим под тебя индивидуально.</p></div>
+        <div class="faq-a"><p><strong>Базовый:</strong> в один клик через Telegram «отмена» — отключаем, $5 в следующем месяце не списываем. Все твои данные остаются у тебя. <strong>Pro:</strong> отмена за 14 дней до следующего списания, через личного менеджера в TG.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q">Бот делает что-то автоматически без моего ведома? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Никогда не отправляет письма/сообщения от твоего имени без подтверждения. Пишет черновики — ты решаешь, что с ними делать. Финальная кнопка "отправить" — всегда твоя.</p></div>
+        <div class="faq-a"><p><strong>Базовый:</strong> никогда не отправляет письма от твоего имени без подтверждения. Пишет черновики — ты решаешь. <strong>Pro:</strong> агент работает в рамках чёткого скрипта который мы согласовали на старте. Деструктивные действия (деплой в прод, отправка клиенту) — всегда требуют твоего «ок» в TG. Read-only действия (отчёты, аналитика) — выполняются автономно.</p></div>
       </div>
       <div class="faq-item">
         <button class="faq-q">Сколько это всё стоит реально? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Запуск — единоразово $99/$199/$399 в зависимости от тарифа. Со второго месяца — $20/мес за работу бота на нашем сервере. Никаких скрытых платежей за токены, запросы, фичи. $20 = всё включено.</p></div>
+        <div class="faq-a"><p><strong>Базовый:</strong> $5/мес. Всё включено: токены, голос, хостинг, поддержка. <strong>Pro:</strong> setup от $499 разово (зависит от сложности задачи и числа интеграций) + $299/мес дальше. Никаких скрытых платежей за токены, никаких счётчиков. Точную цифру по Pro получишь на созвоне.</p></div>
       </div>
       <div class="faq-item">
-        <button class="faq-q">А если я хочу что-то нестандартное? <span class="plus">+</span></button>
-        <div class="faq-a"><p>Тариф Business включает доработки под твой бизнес — кастомные интеграции, нестандартные шаблоны, подключение к твоей CRM/API. На звонке обсуждаем что именно нужно, делаем за 3-5 дней дополнительно к настройке.</p></div>
+        <button class="faq-q">Я не разбираюсь в технологиях — справлюсь? <span class="plus">+</span></button>
+        <div class="faq-a"><p>Если умеешь писать в WhatsApp/Telegram — справишься. Никаких интерфейсов, кнопок, настроек. Только голос или текст. Базовый бот сам тебя проведёт через анкету. По Pro — мы делаем всё за тебя, ты только пользуешься.</p></div>
       </div>
     </div>
   </div>
@@ -2014,17 +2514,23 @@ button, .btn, a {
     <div class="final-cta">
       <div class="final-cta-inner">
         <span class="h-eyebrow" style="color: var(--accent);">// Готов попробовать?</span>
-        <h2>Оставь заявку — напишем в Telegram через час.</h2>
-        <p>3 поля. Без email. Без звонков "проконсультироваться". Только живой человек в твоём TG.</p>
+        <h2>Оставь заявку — ответим в Telegram.</h2>
+        <p>Через час напишет живой человек. Поможет с подключением Базового или назначит созвон по Pro.</p>
 
         <form class="cta-form" id="cta-form" onsubmit="return submitForm(event)">
           <div class="form-row">
             <input type="text" class="form-input" placeholder="Как тебя зовут" required name="name">
             <input type="text" class="form-input" placeholder="@твой_telegram" required name="tg">
           </div>
-          <textarea class="form-input" placeholder="Что хочешь автоматизировать? (1-2 предложения)" name="task"></textarea>
-          <button type="submit" class="form-cta">Получить настройку →</button>
-          <div class="form-note">Ответим в Telegram в течение часа · 30 дней гарантия возврата</div>
+          <select class="form-input" name="package" required id="cta-package">
+            <option value="">Какой пакет интересен?</option>
+            <option value="basic">Базовый — $5/мес (для личных задач)</option>
+            <option value="pro">Pro — от $299/мес (для бизнеса, с созвоном)</option>
+            <option value="not_sure">Ещё не решил — посоветуйте</option>
+          </select>
+          <textarea class="form-input" placeholder="Опиши задачу (1-2 предложения) — это поможет нам подготовиться к разговору" name="task"></textarea>
+          <button type="submit" class="form-cta">Получить ответ в Telegram →</button>
+          <div class="form-note">Ответим в течение часа · Базовый: отмена в 1 клик · Pro: 30 дней гарантия</div>
         </form>
       </div>
     </div>
@@ -2047,7 +2553,7 @@ button, .btn, a {
 </footer>
 
 <!-- ═════════ STICKY MOBILE CTA ═════════ -->
-<a href="#cta" class="sticky-cta">Получить настройку →</a>
+<a href="#wizard" class="sticky-cta">Подобрать пакет за 2 сек →</a>
 
 <script>
 // FAQ accordion
@@ -2074,9 +2580,15 @@ function recalc() {
   const money = monthHours * r;
   moneyOut.textContent = money.toLocaleString('en-US');
   timeOut.textContent = monthHours;
-  const setup = 199;
-  const paybackWeeks = Math.max(1, Math.ceil(setup / (h * r)));
-  paybackOut.textContent = paybackWeeks;
+  // Базовый пакет $5/мес. Окупается за столько часов работы:
+  const basicMonthly = 5;
+  const paybackHours = Math.max(0.1, basicMonthly / r);
+  // Format as "1 час" / "30 мин"
+  if (paybackHours < 1) {
+    paybackOut.textContent = Math.ceil(paybackHours * 60) + ' минут';
+  } else {
+    paybackOut.textContent = paybackHours.toFixed(1).replace('.0', '') + ' часа';
+  }
 }
 hoursIn.addEventListener('input', recalc);
 rateIn.addEventListener('input', recalc);
@@ -2131,12 +2643,198 @@ document.querySelectorAll('.section-head, .use-case, .demo-card, .price-card, .s
   observer.observe(el);
 });
 
+// ═════════ WIZARD — analyze task → recommend package ═════════
+const wizardInput = document.getElementById('wizard-input');
+const wizardSubmit = document.getElementById('wizard-submit');
+const wizardThinking = document.getElementById('wizard-thinking');
+const wizardResult = document.getElementById('wizard-result');
+const wizardResultPkg = document.getElementById('wizard-result-pkg');
+const wizardResultTitle = document.getElementById('wizard-result-title');
+const wizardResultText = document.getElementById('wizard-result-text');
+const wizardResultCta = document.getElementById('wizard-result-cta');
+const wizardReset = document.getElementById('wizard-reset');
+const wizardChips = document.querySelectorAll('.wizard-chip');
+
+// Keywords with weights — Pro vs Basic
+const PRO_KEYWORDS = [
+  ['код', 4], ['программирование', 4], ['разработка', 4], ['deploy', 4], ['деплой', 4],
+  ['github', 3], ['репозиторий', 3], ['pull request', 4], ['баг', 3], ['рефакторинг', 4],
+  ['компьютер', 3], ['комп', 3], ['ноутбук', 2], ['удалённо', 4], ['удаленно', 4], ['rdp', 4], ['ssh', 4],
+  ['сервер', 3], ['vps', 3], ['хостинг', 2], ['домен', 2], ['сайт подня', 3],
+  ['дашборд', 4], ['аналитика', 3], ['продажи', 3], ['метрики', 3], ['kpi', 3], ['crm', 3],
+  ['сотрудник', 3], ['команд', 3], ['отчёт сотрудник', 4], ['проверять отчёт', 3],
+  ['автоматизация бизнес', 4], ['интеграция', 3], ['api', 3], ['бэкенд', 3], ['фронтенд', 3],
+  ['документ', 2], ['договор', 2], ['контракт', 2], ['kp', 2],
+  ['бизнес', 2], ['компани', 2], ['стартап', 2], ['предприним', 3],
+  ['пляж', 2], ['бассейн', 2], ['отпуск', 2], ['путешеств', 2],
+  ['айтишник', 4], ['it', 2], ['девопс', 4], ['разработчик', 4],
+  ['клиент компани', 2], ['проект управление', 3], ['командой', 3]
+];
+
+const BASIC_KEYWORDS = [
+  ['тренировк', 4], ['спорт', 3], ['зож', 3], ['жим', 3], ['присед', 3], ['вес', 2],
+  ['расход', 4], ['финансы личн', 4], ['потратил', 3], ['бюджет', 3], ['деньги мои', 3],
+  ['еда', 2], ['кофе', 2], ['покупк', 2],
+  ['диета', 3], ['калории', 3], ['питани', 3],
+  ['настроение', 3], ['самочувствие', 3], ['дневник', 3],
+  ['напоминан', 3], ['заметк', 3], ['списк дел', 3], ['todo', 2],
+  ['привычк', 3], ['ежеднев', 2], ['утром', 2],
+  ['календарь', 2], ['событи', 2], ['встреч', 2],
+  ['я сам', 2], ['для себя', 3], ['личн', 2], ['мне нужно', 1],
+  ['жена', 2], ['муж', 2], ['ребён', 2], ['дет', 2],
+  ['тайск', 1], ['бат', 1], ['рубл', 1]
+];
+
+function analyzeTask(text) {
+  const lower = text.toLowerCase();
+  let proScore = 0;
+  let basicScore = 0;
+  let proHits = [];
+  let basicHits = [];
+
+  PRO_KEYWORDS.forEach(([kw, w]) => {
+    if (lower.includes(kw)) { proScore += w; proHits.push(kw); }
+  });
+  BASIC_KEYWORDS.forEach(([kw, w]) => {
+    if (lower.includes(kw)) { basicScore += w; basicHits.push(kw); }
+  });
+
+  // Complexity heuristic: long text + multiple systems mentioned → Pro
+  const words = lower.split(/\s+/).filter(w => w.length > 2).length;
+  if (words > 30) proScore += 2;
+  if (words > 60) proScore += 3;
+
+  // Mentions of multiple tools/systems → Pro
+  const systems = ['google', 'crm', 'sql', 'json', 'csv', 'excel'];
+  const sysCount = systems.filter(s => lower.includes(s)).length;
+  if (sysCount >= 2) proScore += 2;
+
+  return { proScore, basicScore, proHits, basicHits, words };
+}
+
+function showResult(pkg, taskText) {
+  if (pkg === 'pro') {
+    wizardResultPkg.className = 'wizard-result-pkg pro';
+    wizardResultPkg.textContent = '⚡ Pro · от $299/мес';
+    wizardResultTitle.textContent = 'Тебе подходит Pro';
+    wizardResultText.innerHTML = 'Задача требует доступа к компьютеру, коду или бизнес-системам — это работа AI-агента, который собирается под клиента. Запишемся на 30-минутный созвон: разберём задачу, подготовим демо, дальше — оплата и работа. <strong>Стоимость зависит от сложности</strong> — обсудим на созвоне.';
+    wizardResultCta.textContent = 'Записаться на демо Pro →';
+    wizardResultCta.href = '#cta';
+    // pre-select Pro in form
+    setTimeout(() => {
+      const sel = document.getElementById('cta-package');
+      if (sel) sel.value = 'pro';
+      const taskField = document.querySelector('textarea[name="task"]');
+      if (taskField && !taskField.value) taskField.value = taskText;
+    }, 100);
+  } else if (pkg === 'basic') {
+    wizardResultPkg.className = 'wizard-result-pkg basic';
+    wizardResultPkg.textContent = 'Базовый · $5/мес';
+    wizardResultTitle.textContent = 'Тебе подходит Базовый';
+    wizardResultText.innerHTML = 'Узкая личная задача — Базовому пакета хватит с запасом. <strong>Подключение за 90 секунд</strong>: карта, бот пишет в TG, 5 вопросов анкеты, готово. $5/мес, отмена в один клик. Никаких созвонов.';
+    wizardResultCta.textContent = 'Подключить за $5 →';
+    wizardResultCta.href = '#pricing';
+    setTimeout(() => {
+      const sel = document.getElementById('cta-package');
+      if (sel) sel.value = 'basic';
+      const taskField = document.querySelector('textarea[name="task"]');
+      if (taskField && !taskField.value) taskField.value = taskText;
+    }, 100);
+  } else {
+    // Mixed / unclear
+    wizardResultPkg.className = 'wizard-result-pkg';
+    wizardResultPkg.style.background = 'var(--surface-2)';
+    wizardResultPkg.style.color = 'var(--text)';
+    wizardResultPkg.textContent = '🤔 Оба пакета';
+    wizardResultTitle.textContent = 'Подходят оба — давай обсудим';
+    wizardResultText.innerHTML = 'Задача похожа и на Базовый, и на Pro. Лучший вариант — оставить заявку, мы напишем в TG и поможем выбрать. <strong>Бесплатно</strong>, ни к чему не обязывает.';
+    wizardResultCta.textContent = 'Получить совет в Telegram →';
+    wizardResultCta.href = '#cta';
+    setTimeout(() => {
+      const sel = document.getElementById('cta-package');
+      if (sel) sel.value = 'not_sure';
+      const taskField = document.querySelector('textarea[name="task"]');
+      if (taskField && !taskField.value) taskField.value = taskText;
+    }, 100);
+  }
+
+  wizardThinking.classList.remove('show');
+  wizardResult.classList.add('show');
+  setTimeout(() => {
+    wizardResult.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }, 200);
+}
+
+function runWizard() {
+  const text = wizardInput.value.trim();
+  if (text.length < 6) {
+    wizardInput.focus();
+    wizardInput.style.borderColor = 'var(--accent)';
+    return;
+  }
+  wizardSubmit.disabled = true;
+  wizardResult.classList.remove('show');
+  wizardThinking.classList.add('show');
+  wizardThinking.textContent = 'Анализирую задачу';
+
+  // Thinking animation timing
+  setTimeout(() => { wizardThinking.textContent = 'Сравниваю с пакетами'; }, 600);
+  setTimeout(() => { wizardThinking.textContent = 'Подбираю лучший вариант'; }, 1200);
+
+  setTimeout(() => {
+    const { proScore, basicScore } = analyzeTask(text);
+    let recommended;
+    const diff = Math.abs(proScore - basicScore);
+    if (proScore === 0 && basicScore === 0) recommended = 'mixed';
+    else if (diff <= 1) recommended = 'mixed';
+    else recommended = proScore > basicScore ? 'pro' : 'basic';
+    showResult(recommended, text);
+    wizardSubmit.disabled = false;
+  }, 1800);
+}
+
+if (wizardSubmit) wizardSubmit.addEventListener('click', runWizard);
+if (wizardInput) {
+  wizardInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) runWizard();
+  });
+}
+wizardChips.forEach(chip => {
+  chip.addEventListener('click', () => {
+    wizardInput.value = chip.dataset.example;
+    wizardInput.focus();
+    runWizard();
+  });
+});
+if (wizardReset) {
+  wizardReset.addEventListener('click', (e) => {
+    e.preventDefault();
+    wizardInput.value = '';
+    wizardResult.classList.remove('show');
+    wizardInput.focus();
+    document.getElementById('wizard').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+}
+
+// Pricing CTAs — pre-fill package in form
+document.querySelectorAll('.price-cta[data-pkg]').forEach(el => {
+  el.addEventListener('click', () => {
+    const pkg = el.dataset.pkg;
+    setTimeout(() => {
+      const sel = document.getElementById('cta-package');
+      if (sel) sel.value = pkg;
+    }, 50);
+  });
+});
+
 // Form submit (stub for now)
 function submitForm(e) {
   e.preventDefault();
   const data = new FormData(e.target);
   const tg = data.get('tg');
-  alert('Спасибо! Сейчас бот напишет тебе в ' + tg + ' в течение часа.\n\n(Это локальная заглушка — нужна настройка бэка для приёма заявок)');
+  const pkg = data.get('package') || 'not specified';
+  const pkgLabel = pkg === 'basic' ? 'Базовый $5/мес' : pkg === 'pro' ? 'Pro от $299/мес' : 'обсудить пакет';
+  alert('Спасибо! Заявка на ' + pkgLabel + ' принята.\n\nСвяжемся в ' + tg + ' в течение часа.\n\n(Это локальная заглушка — нужна настройка бэка для приёма заявок)');
   return false;
 }
 </script>
